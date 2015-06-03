@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System;
 
 /* 
  * ボール生成用空オブジェクトに持たせる、生成、管理のコンポーネント
@@ -29,12 +30,15 @@ public class BallController : MonoBehaviour {
 	// スタートのカウント用
 	private bool isPlaying = false; //プレイ中かどうか
 	public GameObject timer; //タイマーとなるオブジェクト
-	private Text timerText; //タイマーのテキスト
 	private int timeLimit = 60; //制限時間
 	private int countTime = 5; //カウントダウンの秒数
 
+	private DateTime startTime;// ゲーム開始時刻
+	private Text timerText; //タイマーのテキスト
+
 	// Use this for initialization
 	void Start () {
+		startTime = DateTime.Now;// ゲーム開始時刻
 
 		targetNumberText = targetNumberObj.GetComponent<Text>();
 		int targetNumberDisp = targetNumber + 1;
@@ -47,6 +51,8 @@ public class BallController : MonoBehaviour {
 
 		negativeMargin = 0 - margin;
 		positiveMargin = 1 + margin;
+
+		isPlaying = true;
 	}
 
 	// Update is called once per frame
@@ -65,6 +71,14 @@ public class BallController : MonoBehaviour {
 			cnt = defaultCnt - targetNumber;
 		}
 		//Debug.Log(isOutOfScreen(BallArray[0]));
+
+		// 経過時間を取得
+		TimeSpan pastTime = DateTime.Now - startTime;
+		//Debug.Log(pastTime.TotalSeconds);
+		if (isPlaying == true) {
+			timerText.text = pastTime.ToString ();
+		}
+
 	}
 
 	void MakeBallArray (int num) {
@@ -80,12 +94,12 @@ public class BallController : MonoBehaviour {
 		Vector2 max = Camera.main.ViewportToWorldPoint(new Vector2(1, 1));
 
 		float width = sprites [i].bounds.size.x;
-		float x = Random.Range (min.x + width/2, max.x - width/2);
-		float y = Random.Range (max.y, max.y+1.0f);
+		float x = UnityEngine.Random.Range (min.x + width/2, max.x - width/2);
+		float y = UnityEngine.Random.Range (max.y, max.y+1.0f);
 
 		//addforce_x = Random.Range (-10.0f, 10.0f);
 		//addforce_y = Random.Range (-300.0f, -100.0f);
-		addforce_y = Random.Range (-200.0f, -100.0f);
+		addforce_y = UnityEngine.Random.Range (-200.0f, -100.0f);
 
 		startPosition = new Vector3 (x, y, 0.0f);
 
@@ -109,10 +123,12 @@ public class BallController : MonoBehaviour {
 			RemoveNumber (obj);
 			targetNumber++;
 			int targetNumberDisp = targetNumber + 1;
-			targetNumberText.text = "Next : "+targetNumberDisp.ToString();
 			if (targetNumber >= 10) {
 				//targetNumber = 0;
-				Debug.Log("clear!");
+				Debug.Log ("clear!");
+				isPlaying = false;
+			} else {
+				targetNumberText.text = "Next : "+targetNumberDisp.ToString();
 			}
 
 		} else {
