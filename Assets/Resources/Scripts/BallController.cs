@@ -29,54 +29,48 @@ public class BallController : MonoBehaviour {
 
 	// スタートのカウント用
 	private bool isPlaying = false; //プレイ中かどうか
-	public GameObject timer; //タイマーとなるオブジェクト
-	private int timeLimit = 60; //制限時間
-	private int countTime = 5; //カウントダウンの秒数
-
 	private DateTime startTime;// ゲーム開始時刻
 	private Text timerText; //タイマーのテキスト
+	private TimeSpan pastTime;// 経過時間
 
 	// Use this for initialization
 	void Start () {
-		startTime = DateTime.Now;// ゲーム開始時刻
 
 		targetNumberText = targetNumberObj.GetComponent<Text>();
 		int targetNumberDisp = targetNumber + 1;
 		targetNumberText.text = "Next : "+targetNumberDisp.ToString();
 
-		timerText = timer.GetComponent<Text>(); //タイマーを取得
-		CountDown(); //カウントダウン開始
-
-		MakeBallArray (0);
-
 		negativeMargin = 0 - margin;
 		positiveMargin = 1 + margin;
 
-		isPlaying = true;
+		//timerText.text = "00:00:00";
+		StartCoroutine ("StartCount");
+		//isPlaying = true;
 	}
 
 	// Update is called once per frame
 	void Update () {
-		for (int i = 0; i < BallArray.Length; i++) {
-			if (BallArray [i] != null) {
-				if (isOutOfScreen (BallArray [i])) {
-					RemoveNumber (BallArray [i]);
+		//Debug.Log (isPlaying);
+		if (isPlaying == true) {
+			for (int i = 0; i < BallArray.Length; i++) {
+				if (BallArray [i] != null) {
+					if (isOutOfScreen (BallArray [i])) {
+						RemoveNumber (BallArray [i]);
+					}
 				}
 			}
-		}
 
-		if (cnt == 0) {
-			//Debug.Log(cnt);
-			MakeBallArray (targetNumber);
-			cnt = defaultCnt - targetNumber;
-		}
-		//Debug.Log(isOutOfScreen(BallArray[0]));
+			if (cnt == 0) {
+				//Debug.Log(cnt);
+				MakeBallArray (targetNumber);
+				cnt = defaultCnt - targetNumber;
+			}
+			//Debug.Log(isOutOfScreen(BallArray[0]));
 
-		// 経過時間を取得
-		TimeSpan pastTime = DateTime.Now - startTime;
-		//Debug.Log(pastTime.TotalSeconds);
-		if (isPlaying == true) {
-			timerText.text = pastTime.ToString ();
+			// 経過時間を取得
+			pastTime = DateTime.Now - startTime;
+			//Debug.Log(timerText);
+			//timerText.text = pastTime.ToString ();
 		}
 
 	}
@@ -159,33 +153,16 @@ public class BallController : MonoBehaviour {
 		}
 	}
 
-	private IEnumerator CountDown () {
-		Debug.Log ("hoge");
-		int count = countTime;
-		while (count > 0) {
-			WriteTimerText(count.ToString());//カウントダウンのテキストを変更
-			yield return new WaitForSeconds (1.0f); //1秒待つ
-			count -= 1; //カウントを1つ減らす
-		}
-		WriteTimerText("Start!");
-		isPlaying = true;
+	IEnumerator StartCount () {
+		Debug.Log ("3");
 		yield return new WaitForSeconds (1.0f);
-		StartTimer(); //制限時間のカウントを開始
-	}
+		Debug.Log ("2");
+		yield return new WaitForSeconds (1.0f);
+		Debug.Log ("1");
+		yield return new WaitForSeconds (1.0f);
+		isPlaying = true;
+		startTime = DateTime.Now;// ゲーム開始時刻
+		MakeBallArray (0);
 
-	private IEnumerator StartTimer() {
-		var count = timeLimit;
-		while (count > 0) {
-			WriteTimerText(count.ToString());
-			yield return new WaitForSeconds (1.0f);
-			count -= 1;
-		}
-		WriteTimerText("Finish");
-		//OnDragEnd();
-		isPlaying = false;
-	}
-
-	private void WriteTimerText(string str) {
-		timerText.text = str;
 	}
 }
