@@ -8,29 +8,28 @@ using System;
  */
 
 public class BallController : MonoBehaviour {
-	protected Vector3 startPosition;
-	protected float addforce_x;
-	protected float addforce_y;
 
-	public GameObject targetNumberObj;
-	private Text targetNumberText; //タイマーのテキスト
+	public GameObject targetNumberObj;//今タップすべき数値　のゲームオブジェクト
+	public Text timerText; //タイマーのテキスト
+	public Sprite[] sprites; // 1〜10の画像を設定
+
+	private Text targetNumberText; //今タップすべき数値
 	protected int targetNumber = 0;//今タップすべき数値（BallArrayのキー）
 	protected int defaultCnt = 10;//BallArray数
 	private int cnt = 10;//BallArray数
 	private GameObject[] BallArray = new GameObject[10];
 
-	public Sprite[] sprites;
-
-
 	// 一判定用
 	private float margin = 0.1f; //マージン(画面外に出てどれくらい離れたら消えるか)を指定
 	private float negativeMargin;
 	private float positiveMargin;
+	protected Vector3 startPosition;
+	protected float addforce_x;
+	protected float addforce_y;
 
 	// スタートのカウント用
 	private bool isPlaying = false; //プレイ中かどうか
 	private DateTime startTime;// ゲーム開始時刻
-	private Text timerText; //タイマーのテキスト
 	private TimeSpan pastTime;// 経過時間
 
 	// Use this for initialization
@@ -43,7 +42,7 @@ public class BallController : MonoBehaviour {
 		negativeMargin = 0 - margin;
 		positiveMargin = 1 + margin;
 
-		//timerText.text = "00:00:00";
+		timerText.text = "00:00:00";
 		StartCoroutine ("StartCount");
 		//isPlaying = true;
 	}
@@ -70,7 +69,7 @@ public class BallController : MonoBehaviour {
 			// 経過時間を取得
 			pastTime = DateTime.Now - startTime;
 			//Debug.Log(timerText);
-			//timerText.text = pastTime.ToString ();
+			timerText.text = pastTime.ToString ();
 		}
 
 	}
@@ -155,10 +154,13 @@ public class BallController : MonoBehaviour {
 
 	IEnumerator StartCount () {
 		Debug.Log ("3");
+		timerText.text = "3";
 		yield return new WaitForSeconds (1.0f);
 		Debug.Log ("2");
+		timerText.text = "2";
 		yield return new WaitForSeconds (1.0f);
 		Debug.Log ("1");
+		timerText.text = "1";
 		yield return new WaitForSeconds (1.0f);
 		isPlaying = true;
 		startTime = DateTime.Now;// ゲーム開始時刻
