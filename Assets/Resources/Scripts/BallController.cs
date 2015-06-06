@@ -12,6 +12,7 @@ public class BallController : MonoBehaviour {
 	public GameObject targetNumberObj;//今タップすべき数値　のゲームオブジェクト
 	public Text timerText; //タイマーのテキスト
 	public Sprite[] sprites; // 1〜10の画像を設定
+	public GameObject ResetButton; // リセットボタン
 
 	private Text targetNumberText; //今タップすべき数値
 	protected int targetNumber = 0;//今タップすべき数値（BallArrayのキー）
@@ -38,6 +39,7 @@ public class BallController : MonoBehaviour {
 		targetNumberText = targetNumberObj.GetComponent<Text>();
 		int targetNumberDisp = targetNumber + 1;
 		targetNumberText.text = "Next : "+targetNumberDisp.ToString();
+		ResetButton.SetActive (false);
 
 		negativeMargin = 0 - margin;
 		positiveMargin = 1 + margin;
@@ -120,6 +122,7 @@ public class BallController : MonoBehaviour {
 				//targetNumber = 0;
 				Debug.Log ("clear!");
 				isPlaying = false;
+				ResetButton.SetActive (true);
 			} else {
 				targetNumberText.text = "Next : "+targetNumberDisp.ToString();
 			}

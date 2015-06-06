@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class ResetButtonHandler : MonoBehaviour {
@@ -16,7 +17,7 @@ public class ResetButtonHandler : MonoBehaviour {
 
 	public void OnClick() { 
 		//Application.LoadLevel("Main");
-		//Application.LoadLevel (Application.loadedLevelName);
-		Debug.Log("clicked");
+		Application.LoadLevel (Application.loadedLevelName);
+		//Debug.Log("clicked");
 	}
 }
