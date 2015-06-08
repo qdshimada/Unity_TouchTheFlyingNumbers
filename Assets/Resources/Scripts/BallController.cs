@@ -12,6 +12,12 @@ public class BallController : MonoBehaviour {
 	public GameObject targetNumberObj;//今タップすべき数値　のゲームオブジェクト
 	public Text timerText; //タイマーのテキスト
 	public Sprite[] sprites; // 1〜10の画像を設定
+	public GameObject LeftWall;
+	public GameObject RightWall;
+	public float AddforceXMin = -10.0f;
+	public float AddforceXMax = 10.0f;
+	public float AddforceYMin = -200.0f;
+	public float AddforceYMax = -100.0f;
 	public GameObject ResetButton; // リセットボタン
 
 	private Text targetNumberText; //今タップすべき数値
@@ -35,6 +41,7 @@ public class BallController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		MakeWalls ();// 画面両脇壁
 
 		targetNumberText = targetNumberObj.GetComponent<Text>();
 		int targetNumberDisp = targetNumber + 1;
@@ -76,6 +83,18 @@ public class BallController : MonoBehaviour {
 
 	}
 
+	// 画面両脇壁
+	void MakeWalls () {
+		Vector2 left = Camera.main.ViewportToWorldPoint(new Vector2(0, 1));
+		Vector2 right = Camera.main.ViewportToWorldPoint(new Vector2(1, 1));
+
+		LeftWall.transform.position = new Vector3(left.x, 0, 0);
+		LeftWall.transform.localScale = new Vector3(0.1f, left.y*3*3, 1);
+		RightWall.transform.position = new Vector3(right.x, 0, 0);
+		RightWall.transform.localScale = new Vector3(0.1f, left.y*3*3, 1);
+		//Debug.Log (left.y);
+	}
+
 	void MakeBallArray (int num) {
 		for (int i = num; i < BallArray.Length; i++) {
 			BallArray [i] = MakeABall (i);
@@ -92,9 +111,8 @@ public class BallController : MonoBehaviour {
 		float x = UnityEngine.Random.Range (min.x + width/2, max.x - width/2);
 		float y = UnityEngine.Random.Range (max.y, max.y+1.0f);
 
-		//addforce_x = Random.Range (-10.0f, 10.0f);
-		//addforce_y = Random.Range (-300.0f, -100.0f);
-		addforce_y = UnityEngine.Random.Range (-200.0f, -100.0f);
+		addforce_x = UnityEngine.Random.Range (AddforceXMin, AddforceXMax);
+		addforce_y = UnityEngine.Random.Range (AddforceYMin, AddforceYMax);
 
 		startPosition = new Vector3 (x, y, 0.0f);
 
@@ -102,7 +120,8 @@ public class BallController : MonoBehaviour {
 		GameObject prefab = (GameObject)Resources.Load ("Prefabs/Ball");
 		GameObject ball = Instantiate (prefab, startPosition, Quaternion.identity) as GameObject;
 		// 落下の向き
-		ball.GetComponent<Rigidbody2D>().AddForce (new Vector2 (0.0f,addforce_y));
+		//ball.GetComponent<Rigidbody2D>().AddForce (new Vector2 (0.0f,addforce_y));
+		ball.GetComponent<Rigidbody2D>().AddForce (new Vector2 (addforce_x,addforce_y));
 		// ボールのテクスチャ
 		ball.GetComponent<SpriteRenderer> ().sprite = sprites [i];
 		// オブジェクト名 = targetNumber としておく
@@ -144,11 +163,18 @@ public class BallController : MonoBehaviour {
 		Vector3 positionInScreen = Camera.main.WorldToViewportPoint(obj.transform.position);
 		//positionInScreen.z = obj.transform.position.z;
 
+/*
 		if (positionInScreen.x <= negativeMargin ||
 			positionInScreen.x >= positiveMargin ||
 			positionInScreen.y <= negativeMargin ||
 			positionInScreen.y >= positiveMargin)
 		{
+*/
+		if (positionInScreen.x <= negativeMargin ||
+			positionInScreen.x >= positiveMargin ||
+			positionInScreen.y <= negativeMargin)
+		{
+
 			return true;
 		} else {
 			return false;
